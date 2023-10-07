@@ -1,0 +1,12 @@
+.body {
+    display: flex;
+    justify-content: center;
+}
+.select-algo-box {
+    display: flex;
+  position: absolute;
+  z-index: 1000;
+  top: 2%;
+  height: 40px;
+  width: 200px;
+}
