@@ -9,15 +9,19 @@ import {
 } from "react-leaflet";
 import "./App.css";
 import { useMap } from "./hooks";
-import { Button, Select } from "antd";
+import { Select } from "antd";
 import DraggableMarker from "./components/DraggableMarker";
-("./components/DraggableMarker.jsx");
 
 const blackOptions = { color: "yellow" };
 const redOptions = { color: "red", weight: "4" };
 const limeOptions = { color: "lime", weight: "4" };
 const purpleOptions = { color: "purple", weight: "4" };
 
+{/*
+  To run on local machine, uncomment the line below
+  and comment the BASE_URL for www.
+  const BASE_URL = "http://127.0.0.1:8000";
+*/}
 const BASE_URL = "https://fastapi-path-finding-production.up.railway.app";
 
 const App = () => {
