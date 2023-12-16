@@ -19,6 +19,7 @@ const purpleOptions = { color: "purple", weight: "4" };
 
 {/*
   To run on local machine, uncomment the line below
+  and comment the BASE_URL for www.
   const BASE_URL = "http://127.0.0.1:8000";
 */}
 const BASE_URL = "https://fastapi-path-finding-production.up.railway.app";
