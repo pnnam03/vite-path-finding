@@ -17,7 +17,11 @@ const redOptions = { color: "red", weight: "4" };
 const limeOptions = { color: "lime", weight: "4" };
 const purpleOptions = { color: "purple", weight: "4" };
 
-const BASE_URL = "http://127.0.0.1:8000";
+{/*
+  To run on local machine, uncomment the line below
+  const BASE_URL = "http://127.0.0.1:8000";
+*/}
+const BASE_URL = "https://fastapi-path-finding-production.up.railway.app";
 
 const App = () => {
   const { position } = useMap();
