@@ -1,14 +1,12 @@
-import React, { useState, useCallback, useRef, useMemo } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+import { useState, useCallback, useRef, useMemo } from "react";
 import { Marker, Tooltip } from "react-leaflet";
 import L from "leaflet";
-const BASE_URL = "https://fastapi-path-finding-production.up.railway.app";
+import { VITE_BASE_URL } from "../env";
 
-const DraggableMarker = ({
-  position,
-  setPosition,
-  setPathInvisibility,
-  tooltip,
-}) => {
+const DraggableMarker = ({ position, setPosition, tooltip, iconProps, iconUrl, iconSize }) => {
   const [draggable, setDraggable] = useState(true);
   const markerRef = useRef(null);
 
@@ -29,7 +27,7 @@ const DraggableMarker = ({
             }), // Convert the data to JSON format
           };
           const nearestNode = await fetch(
-            BASE_URL + "/find_nearest_node",
+            VITE_BASE_URL + "/find_nearest_node",
             options
           );
           const response = await nearestNode.json();
@@ -49,12 +47,9 @@ const DraggableMarker = ({
   }, []);
 
   const customIcon = new L.Icon({
-    iconUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png", // Default marker icon
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    // You can customize the icon's color here
+    iconUrl: iconProps.iconUrl,
+    iconSize: iconProps.iconSize,
+    iconAnchor: iconProps.iconAnchor,
   });
 
   return (

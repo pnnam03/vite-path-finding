@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -9,26 +9,30 @@ import {
 } from "react-leaflet";
 import "./App.css";
 import { useMap } from "./hooks";
-import { Button, Select } from "antd";
+import { Select } from "antd";
 import DraggableMarker from "./components/DraggableMarker";
-("./components/DraggableMarker.jsx");
+import { VITE_BASE_URL } from "./env";
 
 const blackOptions = { color: "yellow" };
-const redOptions = { color: "red", weight: "4" };
-const limeOptions = { color: "lime", weight: "4" };
-const purpleOptions = { color: "purple", weight: "4" };
-
-const BASE_URL = "https://fastapi-path-finding-production.up.railway.app";
+const option1 = { color: "red", weight: "4" };
+const option2 = { color: "blue", weight: "4" };
+const option3 = { color: "green", weight: "4" };
+const option4 = { color: "magenta", weight: "4" };
+const option5 = { color: "purple", weight: "4" };
+const option6 = { color: "cyan", weight: "4" };
+const option7 = { color: "olive", weight: "4" };
 
 const App = () => {
   const { position } = useMap();
 
   const algoOptions = [
-    { value: "bfs", label: "BFS" },
-    { value: "dfs", label: "DFS" },
+    { value: "bfs", label: "BFS (Breadth First Search)" },
+    { value: "dfs", label: "DFS (Depth First Search)" },
     { value: "dijkstra", label: "Dijkstra" },
-    { value: "bellman-ford", label: "Bellman-Ford" },
-    { value: "a*", label: "A*" },
+    { value: "astar", label: "A*" },
+    { value: "ids", label: "IDS (Iterative Deepening Search)" },
+    { value: "gbfs", label: "GBFS (Greedy Best-First Search)" },
+    { value: "ucs", label: "UCS (Uniform-Cost Search)" },
   ];
 
   const rectangle = [
@@ -43,6 +47,10 @@ const App = () => {
   const [bfsPath, setBFSPath] = useState(null);
   const [dfsPath, setDFSPath] = useState(null);
   const [dijkstraPath, setDijkstraPath] = useState(null);
+  const [astarPath, setAstarPath] = useState(null);
+  const [idsPath, setIDSPath] = useState(null);
+  const [gbfsPath, setGBFSPath] = useState(null);
+  const [ucsPath, setUCSPath] = useState(null);
   const [pathInvisibility, setPathInvisibility] = useState(false);
   const [pathLength, setPathLength] = useState(0);
 
@@ -50,6 +58,7 @@ const App = () => {
     if (startPosition && stopPosition && selectedValue) {
       findPath();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startPosition, stopPosition, selectedValue]);
 
   const handleChange = (value) => {
@@ -70,7 +79,7 @@ const App = () => {
         }),
       };
 
-      const nearestNode = await fetch(BASE_URL + "/find_path", options);
+      const nearestNode = await fetch(VITE_BASE_URL + "/find_path", options);
       const response = await nearestNode.json();
 
       if (selectedValue === "bfs") setBFSPath(response.path);
@@ -79,7 +88,15 @@ const App = () => {
 
       if (selectedValue === "dijkstra") setDijkstraPath(response.path);
 
-      setPathLength(response.length);
+      if (selectedValue === "astar") setAstarPath(response.path);
+
+      if (selectedValue === "ucs") setUCSPath(response.path);
+
+      if (selectedValue === "ids") setIDSPath(response.path);
+
+      if (selectedValue === "gbfs") setGBFSPath(response.path);
+
+      setPathLength(response.length.toFixed());
       setPathInvisibility(true);
     };
 
@@ -87,6 +104,7 @@ const App = () => {
   };
 
   const LocationFinderDummy = () => {
+    // eslint-disable-next-line no-unused-vars
     const map = useMapEvents({
       click(e) {
         const fetcher = async () => {
@@ -102,7 +120,7 @@ const App = () => {
             }),
           };
           const nearestNode = await fetch(
-            BASE_URL + "/find_nearest_node",
+            VITE_BASE_URL + "/find_nearest_node",
             options
           );
           const response = await nearestNode.json();
@@ -140,20 +158,44 @@ const App = () => {
         <Rectangle bounds={rectangle} pathOptions={blackOptions} />
 
         {selectedValue === "dfs" && dfsPath && pathInvisibility ? (
-          <Polyline pathOptions={purpleOptions} positions={dfsPath}>
-            <Tooltip>Length: {pathLength}m</Tooltip>
+          <Polyline pathOptions={option1} positions={dfsPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
           </Polyline>
         ) : null}
 
         {selectedValue === "bfs" && bfsPath && pathInvisibility ? (
-          <Polyline pathOptions={limeOptions} positions={bfsPath}>
-            <Tooltip>Length: {pathLength}m</Tooltip>
+          <Polyline pathOptions={option2} positions={bfsPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
           </Polyline>
         ) : null}
 
         {selectedValue === "dijkstra" && dijkstraPath && pathInvisibility ? (
-          <Polyline pathOptions={redOptions} positions={dijkstraPath}>
-            <Tooltip>Length: {pathLength}m</Tooltip>
+          <Polyline pathOptions={option3} positions={dijkstraPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
+          </Polyline>
+        ) : null}
+
+        {selectedValue === "astar" && astarPath && pathInvisibility ? (
+          <Polyline pathOptions={option4} positions={astarPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
+          </Polyline>
+        ) : null}
+
+        {selectedValue === "ids" && idsPath && pathInvisibility ? (
+          <Polyline pathOptions={option5} positions={idsPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
+          </Polyline>
+        ) : null}
+
+        {selectedValue === "ucs" && ucsPath && pathInvisibility ? (
+          <Polyline pathOptions={option6} positions={ucsPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
+          </Polyline>
+        ) : null}
+
+        {selectedValue === "gbfs" && gbfsPath && pathInvisibility ? (
+          <Polyline pathOptions={option7} positions={gbfsPath}>
+            <Tooltip sticky>Length: {pathLength}m</Tooltip>
           </Polyline>
         ) : null}
 
@@ -163,6 +205,11 @@ const App = () => {
             setPosition={setStartPosition}
             setPathInvisibility={setPathInvisibility}
             tooltip="Start location"
+            iconProps={{
+              iconUrl: "/marker.png",
+              iconSize: [32, 32],
+              iconAnchor: [16, 32],
+            }}
           />
         ) : null}
 
@@ -172,23 +219,22 @@ const App = () => {
             setPosition={setStopPosition}
             setPathInvisibility={setPathInvisibility}
             tooltip="Stop location"
+            iconProps={{
+              iconUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+              iconSize: [16, 32],
+              iconAnchor: [8, 32],
+            }}
           />
         ) : null}
       </MapContainer>
 
-      <div className="select-algo-box">
+      <div className="select-algo-box" style={{ minWidth: "280px" }}>
         <Select
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%" }}
           onChange={handleChange}
           options={algoOptions}
         />
-        {/* <Button
-          type="primary"
-          style={{ height: "100%", marginLeft: "10px" }}
-          onClick={findPath}
-        >
-          Find
-        </Button> */}
       </div>
     </div>
   );
